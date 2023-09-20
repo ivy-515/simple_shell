@@ -33,6 +33,7 @@ void x_str(char *str);
 int token_len(char *str, char *delim);
 int tokens_count(char *str, char *delim);
 char **x_strtok(char *line, char *delim);
+char *x_getline();
 
 #endif /* _SHELL_H_ */
 
