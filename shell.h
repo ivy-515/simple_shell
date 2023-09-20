@@ -30,8 +30,5 @@ char *x_strcpy(char *dest, char *src);
 int x_atoi(char *s);
 char *x_strcat(char *dest, char *src);
 
-char *trim_space(char *buffer);
-char *get_newline(char *buffer, size_t end);
-size_t get_length(char *buffer, size_t end);
 #endif /* _SHELL_H_ */
 

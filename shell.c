@@ -4,12 +4,12 @@
  * main - A function that runs the shell.
  * @argc: The number of arguments.
  * @argv: The pointer to array of arguments.
- * @envir: The pointer to array of environmental variables.
+ * @envir: The pointer to array of enviromental variables.
  * Return: Always 0.
  */
 int main(int argc, char **argv, char **envir)
 {
-	char *buffer = NULL, **cmd = NULL, *space;
+	char *buffer = NULL, **cmd = NULL;
 	size_t buf_size = 0;
 	ssize_t line = 0;
 	int cycles = 0;
@@ -21,17 +21,9 @@ int main(int argc, char **argv, char **envir)
 		x_prompt();
 		signal(SIGINT, x_signal);
 		line = getline(&buffer, &buf_size, stdin);
-		if (!buffer)
-		{
-			free(buffer);
-			break;
-		}
-		space = trim_space(buffer);
-		free(buffer);
-		buffer = space;
 		if (line == EOF)
 			x_EOF(buffer);
-		else if (buffer[0] == '\n')
+		else if (*buffer == '\n')
 			free(buffer);
 		else
 		{
@@ -45,7 +37,10 @@ int main(int argc, char **argv, char **envir)
 			else
 				fork_cmd(cmd, argv[0], envir, cycles);
 		}
-		fflush(stdin), buffer = NULL, buf_size = 0;
+		fflush(stdin);
+		buffer = NULL, buf_size = 0;
 	}
-	return ((line == -1) ? EXIT_FAILURE : EXIT_SUCCESS);
+	if (line == -1)
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
