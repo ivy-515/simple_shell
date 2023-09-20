@@ -15,9 +15,17 @@ int main(int argc, char **argv, char **envir)
 	int cycles = 0;
 	(void)argc;
 
-	while (cycles++, x_prompt(), signal(SIGINT, x_signal),
-		line = getline(&buffer, &buf_size, stdin), buffer)
+	while (1)
 	{
+		cycles++;
+		x_prompt();
+		signal(SIGINT, x_signal);
+		line = getline(&buffer, &buf_size, stdin);
+		if (!buffer)
+		{
+			free(buffer);
+			break;
+		}
 		space = trim_space(buffer);
 		free(buffer);
 		buffer = space;

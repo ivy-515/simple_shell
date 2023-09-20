@@ -29,8 +29,6 @@ unsigned int x_strlen(char *s);
 char *x_strcpy(char *dest, char *src);
 int x_atoi(char *s);
 char *x_strcat(char *dest, char *src);
-/*int token_len(char *str, char *delim);
-int tokens_count(char *str, char *delim);*/
 
 char *trim_space(char *buffer);
 char *get_newline(char *buffer, size_t end);
