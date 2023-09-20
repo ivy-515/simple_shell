@@ -2,7 +2,7 @@
 
 /**
  * free_exit - A function that frees all the memory allocated and exit.
- * @command: The pointer to allocated command memory to free.
+ * @cmd: The pointer to allocated command memory to free.
  * Return: Nothing.
  */
 void free_exit(char **cmd)
@@ -23,4 +23,3 @@ void free_exit(char **cmd)
 	free(cmd);
 	exit(EXIT_FAILURE);
 }
-

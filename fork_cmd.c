@@ -5,7 +5,7 @@
  * @cmd: The pointer to tokenized command
  * @name: The pointer to the name of shell.
  * @env: The pointer to the enviromental variables.
- * @cicles: Number of executed cycles.
+ * @cycles: Number of executed cycles.
  * Return: Nothing.
  */
 void fork_cmd(char **cmd, char *name, char **env, int cycles)

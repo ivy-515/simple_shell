@@ -5,15 +5,17 @@
  * @cmd: The pointer to tokenized command.
  * Return: Nothing.
  */
-void exit_shell(char **cmd) {
-  int i = 0;
+void exit_shell(char **cmd)
+{
+	int i = 0;
 
-  if (cmd[1] == NULL) {
-    free_cmd(cmd);
-    exit(EXIT_SUCCESS);
-  }
+	if (cmd[1] == NULL)
+	{
+		free_cmd(cmd);
+		exit(EXIT_SUCCESS);
+	}
 
-  i = x_atoi(cmd[1]);
-  free_cmd(cmd);
-  exit(i);
+	i = x_atoi(cmd[1]);
+	free_cmd(cmd);
+	exit(i);
 }
