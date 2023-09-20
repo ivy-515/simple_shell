@@ -34,8 +34,5 @@ int token_len(char *str, char *delim);
 int tokens_count(char *str, char *delim);
 char **x_strtok(char *line, char *delim);
 
-char *_trim_white_space(char *line);
-size_t _get_length_without_space_dup(char *line, size_t end);
-char *_get_newline_without_space_dup(char *line, size_t end);
 #endif /* _SHELL_H_ */
 

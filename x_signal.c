@@ -1,4 +1,4 @@
-i#include "shell.h"
+#include "shell.h"
 
 /**
  * x_signal - A function to handle Ctr + C signal.
