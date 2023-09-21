@@ -26,7 +26,7 @@ int word_counter(char *line, const char *delem)
 }
 
 /**
- * split - function that splits given string
+ * split_cmd - function that splits given string
  * into multiple substrings
  *
  * @line: line to be splitted
