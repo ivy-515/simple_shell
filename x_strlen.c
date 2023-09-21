@@ -1,16 +1,21 @@
-#include "shell.h"
 
 /**
- * x_strlen - A function that finds the length of the string
- * @s: The input string
- * Return: The length of the string
+ * x_strlen - function that counts
+ * number of character in a given
+ * string
+ *
+ * @str: string
+ * Return: integer
  */
-unsigned int x_strlen(char *s)
+int x_strlen(const char *str)
 {
-	unsigned int len = 0;
+	int len;
 
-	while (s[len])
+	len = 0;
+	if (!str)
+		return (0);
+	while (str[len])
 		len++;
-
 	return (len);
 }
+

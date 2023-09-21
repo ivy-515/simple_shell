@@ -1,34 +1,60 @@
-#ifndef _SHELL_H_
-#define _SHELL_H_
+#ifndef SHELL_H
+#define SHELL_H
 
-#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
+#include <signal.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <stdarg.h>
 
+/**
+ * enum status_action_e - actions to be applied to
+ * status code
+ *
+ * @UPDATE_STATUS: action that will be used to
+ * update status code
+ * @GET_STATUS: action that will be used to
+ * get status
+ */
+typedef enum status_action_e
+{
+	UPDATE_STATUS,
+	GET_STATUS
+} status_action_t;
 
-void x_prompt(void);
-void x_signal(int signals);
-void x_EOF(char *buffer);
-void exit_shell(char **command);
-void fork_cmd(char **command, char *name, char **env, int cicles);
-int x_cd(const char *path);
-void execute_cmd(char **command, char *name, char **env, int cicles);
-void print_envirement(char **envi);
-char **x_getPATH(char **env);
-void print_nfound(char *name, int cicles, char **cmd);
-char **split_cmd(char *buffer, const char *s);
-void free_cmd(char **cmd);
-void free_exit(char **cmd);
-int x_strcmp(char *s1, char *s2);
-unsigned int x_strlen(char *s);
-char *x_strcpy(char *dest, char *src);
-int x_atoi(char *s);
+/**
+ * enum global_action_e - actions that will be
+ * applied to global variables
+ *
+ * @GET_LINE_NUMBER: to retrieve line number
+ * @GET_PROGRAM_NAME: to retrieve prgram
+ * name
+ * @SET_PROGRAM_NAME: to set program name
+ * @INCREMENT_LINE: to increment line each time
+ */
+typedef enum global_action_e
+{
+	GET_LINE_NUMBER,
+	GET_PROGRAM_NAME,
+	SET_PROGRAM_NAME,
+	INCREMENT_LINE
+} global_action_t;
+
+int x_status_track(status_action_t action, int new_status);
+void x_env(void);
+void x_exit(void);
+char **split_cmd(char *line, const char *del);
+char *x_strdup(const char *str);
+int x_strlen(const char *str);
+int x_strcmp(const char *s1, const char *s2);
 char *x_strcat(char *dest, char *src);
-
-#endif /* _SHELL_H_ */
+void execute_cmd(char **tokens);
+void *x_global_var(global_action_t action, char *str);
+void x_format_printf(int fd, const char *format, ...);
+#endif
 

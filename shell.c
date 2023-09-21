@@ -1,46 +1,78 @@
 #include "shell.h"
 
 /**
- * main - A function that runs the shell.
- * @argc: The number of arguments.
- * @argv: The pointer to array of arguments.
- * @envir: The pointer to array of enviromental variables.
- * Return: Always 0.
+ * x_prompt - function that will showed
+ * to the user to enter commands
+ *
+ * Return: (void)
  */
-int main(int argc, char **argv, char **envir)
+void x_prompt(void)
 {
-	char *buffer = NULL, **cmd = NULL;
-	size_t buf_size = 0;
-	ssize_t line = 0;
-	int cycles = 0;
-	(void)argc;
+	if (isatty(0))
+		write(1, "shell$> ", 8);
+}
 
+/**
+ * handle_sig - function that will be
+ * passed to the signal to handle
+ * ctrl-c
+ *
+ * @sig: signint signal number
+ * Return: (void)
+ */
+void handle_sig(int sig)
+{
+	(void)sig;
+
+	if (isatty(0))
+		write(1, "\n$> ", 4);
+}
+
+/**
+ * main - entry point to the program
+ *
+ * @ac: number of arguments
+ * @av: arguments
+ * Return: (0) success, otherwise error
+ */
+int main(int ac, char *av[])
+{
+	char *line, **tokens;
+	size_t len;
+
+	(void)ac;
+	x_global_var(SET_PROGRAM_NAME, av[0]);
+	signal(SIGINT, handle_sig);
 	while (1)
 	{
-		cycles++;
+		line = NULL;
 		x_prompt();
-		signal(SIGINT, x_signal);
-		line = getline(&buffer, &buf_size, stdin);
-		if (line == EOF)
-			x_EOF(buffer);
-		else if (*buffer == '\n')
-			free(buffer);
-		else
+		if (getline(&line, &len, stdin) == -1)
 		{
-			buffer[x_strlen(buffer) - 1] = '\0';
-			cmd = split_cmd(buffer, " \0");
-			free(buffer);
-			if (x_strcmp(cmd[0], "exit") != 0)
-				exit_shell(cmd);
-			else if (x_strcmp(cmd[0], "cd") != 0)
-				x_cd(cmd[1]);
-			else
-				fork_cmd(cmd, argv[0], envir, cycles);
+			free(line);
+			break;
 		}
-		fflush(stdin);
-		buffer = NULL, buf_size = 0;
+		tokens = split_cmd(line, " \t\n");
+		if (!tokens || !*tokens)
+		{
+			free(line);
+			free(tokens);
+			continue;
+		}
+		x_global_var(INCREMENT_LINE, NULL);
+		if (!x_strcmp(tokens[0], "exit"))
+		{
+			free(line);
+			free(tokens);
+			x_exit();
+		}
+		else if (!x_strcmp(tokens[0], "env"))
+			x_env();
+		else
+			execute_cmd(tokens);
+		free(line);
+		free(tokens);
 	}
-	if (line == -1)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+	return (x_status_track(GET_STATUS, 0));
 }
+

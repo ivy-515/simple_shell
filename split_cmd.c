@@ -1,45 +1,57 @@
 #include "shell.h"
 
 /**
- * split_cmd - A function that split and create a full string command.
- * @s: The delimiter for strtok.
- * @buffer: The pointer to input string.
- * Return: A string with full command.
+ * word_counter - function that calculate
+ * number of words that were splitted
+ * with delem
+ *
+ * @line: to be splitted
+ * @delem: to be split with
+ * Return: number of words
  */
-char **split_cmd(char *buffer, const char *s)
+int word_counter(char *line, const char *delem)
 {
-	char *token = NULL, **commands = NULL;
-	size_t bufsize = 0;
-	int i = 0;
+	int len;
+	char *token;
 
-	if (buffer == NULL)
-		return (NULL);
-
-	bufsize = x_strlen(buffer);
-	commands = malloc((bufsize + 1) * sizeof(char *));
-	if (commands == NULL)
+	len = 0;
+	token = strtok(line, delem);
+	while (token)
 	{
-		perror("Unable to allocate buffer");
-		free(buffer);
-		free_cmd(commands);
-		exit(EXIT_FAILURE);
+		len++;
+		token = strtok(NULL, delem);
 	}
+	free(line);
+	return (len);
+}
 
-	token = strtok(buffer, s);
+/**
+ * split - function that splits given string
+ * into multiple substrings
+ *
+ * @line: line to be splitted
+ * @delem: to split with
+ * Return:  2d array of characters with trailing
+ * NULL
+ */
+char **split_cmd(char *line, const char *delem)
+{
+	char **tokens, *token;
+	int token_len, iterator;
+
+	token_len = word_counter(x_strdup(line), delem);
+	tokens = malloc(sizeof(char *) * (token_len + 1));
+	if (!tokens)
+		return (NULL);
+	token = strtok(line, delem);
+	iterator = 0;
 	while (token != NULL)
 	{
-		commands[i] = malloc(x_strlen(token) + 1);
-		if (commands[i] == NULL)
-		{
-			perror("Unable to allocate buffer");
-			free_cmd(commands);
-			return (NULL);
-		}
-		x_strcpy(commands[i], token);
-		token = strtok(NULL, s);
-		i++;
+		tokens[iterator] = token;
+		iterator++;
+		token = strtok(NULL, delem);
 	}
-	commands[i] = NULL;
-	return (commands);
+	tokens[iterator] = NULL;
+	return (tokens);
 }
 

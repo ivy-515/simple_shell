@@ -1,48 +1,119 @@
 #include "shell.h"
 
 /**
- * execute_cmd - A function that executes a command.
- * @cmd: The pointer to tokienized command
- * @name: The name of the shell.
- * @env: The pointer to the enviromental variables.
- * @cycles: Number of executed cycles.
- * Return: Nothing.
+ * x_get_path - function that looks for
+ * path in the valid path
+ *
+ * Return: void
  */
-void execute_cmd(char **cmd, char *name, char **env, int cycles)
+char *x_get_path(void)
 {
-	char **pathways = NULL, *full_path = NULL;
-	struct stat st;
-	unsigned int i = 0;
+	char *path, *line;
+	char **envirs, **chunks;
 
-	if (x_strcmp(cmd[0], "env") != 0)
-		print_envirement(env);
-	if (stat(cmd[0], &st) == 0)
+	envirs = __environ;
+	while (*envirs)
 	{
-		if (execve(cmd[0], cmd, env) < 0)
+		line = x_strdup(*envirs);
+		chunks = split_cmd(line, "=");
+		if (!x_strcmp(chunks[0], "PATH"))
 		{
-			perror(name);
-			free_exit(cmd);
+			path = x_strdup(chunks[1]);
+			free(line);
+			free(chunks);
+			return (path);
 		}
+		free(line);
+		free(chunks);
+		envirs++;
+	}
+	return (NULL);
+}
+
+/**
+ * get_cmd_path - function that get
+ * command concatenated with the path
+ *
+ * @cmd_name: command name
+ * Return: command
+ */
+char *get_cmd_path(char *cmd_name)
+{
+	char *path, **path2d, **iterator, dest[200];
+	struct stat st;
+
+	if ((cmd_name[0] == '.' ||
+		 cmd_name[0] == '/') &&
+		!stat(cmd_name, &st))
+	{
+		return (x_strdup(cmd_name));
+	}
+	path = x_get_path();
+	if (!path)
+		return (NULL);
+	path2d = iterator = split_cmd(path, ":");
+	while (*iterator)
+	{
+		dest[0] = 0;
+		x_strcat(x_strcat(x_strcat(dest, *iterator), "/"), cmd_name);
+		if (!stat(dest, &st))
+		{
+			free(path);
+			free(path2d);
+			return (x_strdup(dest));
+		}
+		iterator++;
+	}
+	free(path);
+	free(path2d);
+	return (NULL);
+}
+
+/**
+ * execute_cmd - function that executes
+ * given command
+ *
+ * @tokens: 2d array contain command
+ * information
+ * Return: (void)
+ */
+void execute_cmd(char **tokens)
+{
+	char *command_with_path;
+	int pid, status;
+
+	command_with_path = get_cmd_path(tokens[0]);
+	if (!command_with_path)
+	{
+		x_format_printf(2, "%s: %d: %s: not found\n",
+				 (char *)x_global_var(GET_PROGRAM_NAME, NULL),
+				 *((int *)x_global_var(GET_LINE_NUMBER, NULL)),
+				 tokens[0]);
+		x_status_track(UPDATE_STATUS, 127);
+		return;
+	}
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("$");
+		x_status_track(UPDATE_STATUS, 1);
+		return;
+	}
+	else if (pid == 0)
+	{
+		execve(command_with_path, tokens, __environ);
+		free(command_with_path);
+		free(tokens);
+		perror("$");
+		if (errno == EACCES)
+			_exit(126);
+		exit(errno);
 	}
 	else
 	{
-		pathways = x_getPATH(env);
-		while (pathways[i])
-		{
-			full_path = x_strcat(pathways[i], cmd[0]);
-			i++;
-			if (stat(full_path, &st) == 0)
-			{
-				if (execve(full_path, cmd, env) < 0)
-				{
-					perror(name);
-					free_cmd(pathways);
-					free_exit(cmd);
-				}
-				return;
-			}
-		}
-		print_nfound(name, cycles, cmd);
-		free_cmd(pathways);
+		wait(&status);
+		x_status_track(UPDATE_STATUS, WEXITSTATUS(status));
+		free(command_with_path);
 	}
 }
+

@@ -1,21 +1,18 @@
-#include "shell.h"
-
 /**
- * x_strcmp - A funtion that compares two strings
- * @s1: string 1
- * @s2: string 2
- * Return: 1 if strings are the same, 0 if not
+ * x_strcmp - function that compares two
+ * strings
+ *
+ * @s1: first string
+ * @s2: second string
+ * Return: zero when two strings are equal
  */
-int x_strcmp(char *s1, char *s2)
+int x_strcmp(const char *s1, const char *s2)
 {
-	unsigned int i = 0;
-
-	while (s1[i])
+	while (*s1 && *s2 && *s1 == *s2)
 	{
-		if (s1[i] != s2[i])
-			return (0);
-		i++;
+		s1++;
+		s2++;
 	}
-
-	return (1);
+	return (*s1 - *s2);
 }
+

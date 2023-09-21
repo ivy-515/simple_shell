@@ -1,20 +1,27 @@
 #include "shell.h"
 
 /**
- * x_strcat - a function that concatenates two strings.
- * @dest: an input string
- * @src: an input string
- * Return: A pointer to the resulting string
+ * x_strcat - function that takes two
+ * strings and concatenate them
+ *
+ * @dest: destination string that will
+ * recieve characters
+ * @src: source of the characters
+ * Return: (dest)
  */
 char *x_strcat(char *dest, char *src)
 {
-	char *temp = dest;
+	int len1, iter;
 
-	while (*dest)
-		dest++;
+	len1 = x_strlen(dest);
+	iter = 0;
 
-	*dest++ = '/';
-	while (*src)
-		*dest++ = *src++;
-	return (temp);
+	while (src[iter])
+	{
+		dest[len1 + iter] = src[iter];
+		iter++;
+	}
+	dest[len1 + iter] = 0;
+	return (dest);
 }
+
