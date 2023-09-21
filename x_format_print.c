@@ -5,7 +5,7 @@
  * _put_number to print given number
  *
  * @fd: file descriptor
- * @numb: number to be printed
+ * @num: number to be printed
  * Return: (void)
  */
 void put_numb_helper(int fd, int num)
